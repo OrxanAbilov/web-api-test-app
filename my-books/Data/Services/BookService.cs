@@ -4,6 +4,7 @@ using my_books.Data.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace my_books.Data.Services
 {
@@ -35,18 +36,33 @@ namespace my_books.Data.Services
             _context.SaveChanges();
         }
 
-        public List<Book> GetAllBooks()
-        {
-            List<Book> books = _context.Books.ToList();
-            return books;
-        }
+        public List<Book> GetAllBooks() => _context.Books.ToList();
+        
 
-        public Book GetBookById(int id)
+        public Book GetBookById(int id) => _context.Books.Where(n => n.Id == id).FirstOrDefault();
+            
+        
+        public Book UpdateBookById(int id, BookVm book)
         {
-            Book book = _context.Books.Where(n => n.Id == id).FirstOrDefault();
-            return book;
-        }
+            var _book = _context.Books.Where(i => i.Id == id).FirstOrDefault();
 
+            if (_book != null)
+            {
+                _book.Title = book.Title;
+                _book.Description = book.Description;
+                _book.IsRead = book.IsRead;
+                _book.DateRead = book.IsRead ? book.DateRead : null;
+                _book.Rate = book.IsRead ? book.Rate : null;
+                _book.Genre = book.Genre;
+                _book.Author = book.Author;
+                _book.CoverUrl = book.CoverUrl;
+               
+                _context.SaveChanges();
+            }
+            
+            return _book;
+            
+        }
        
     }
 }
